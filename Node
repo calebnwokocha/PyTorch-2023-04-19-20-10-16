@@ -7,10 +7,9 @@ from sklearn.datasets import load_diabetes
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-# Define a Perceptron neural network with a linear layer, and two trainable parameters
-class Perceptron(nn.Module):
+class Node(nn.Module):
     def __init__(self):
-        super(Perceptron, self).__init__()
+        super(Node, self).__init__()
         self.linear = nn.Linear(10, 1)
         self.w1 = nn.Parameter(torch.randn(1, requires_grad=True))
         self.w2 = nn.Parameter(torch.randn(1, requires_grad=True))
@@ -22,8 +21,8 @@ class Perceptron(nn.Module):
         return y
 
 # Define an optimizer with stochastic gradient descent and learning rate 0.01
-perceptron = Perceptron()
-optimizer = optim.SGD(perceptron.parameters(), lr=0.01)
+node = Node()
+optimizer = optim.SGD(node.parameters(), lr=0.01)
 scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.0001, patience=5)
 
 # Load the diabetes dataset, and standardize the input features and target variable
@@ -38,14 +37,14 @@ y = torch.tensor(y, dtype=torch.float32).view(-1, 1)
 # Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# Train the model for 1000 epochs using mini-batch stochastic gradient descent
+# Train the model for 10000 epochs using stochastic gradient descent
 for epoch in range(10000):
     for i in range(len(X)):
         # Zero the gradients to avoid accumulating them
         optimizer.zero_grad()
 
         # Make a prediction for a single input
-        y_pred = perceptron(X[i])
+        y_pred = node(X[i])
 
         # Compute the mean squared error loss for a single input
         loss = nn.MSELoss()(y_pred, y[i])
